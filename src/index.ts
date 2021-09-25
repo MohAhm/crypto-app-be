@@ -1,6 +1,7 @@
-import { ApolloServer, ApolloError, gql } from 'apollo-server';
-import { CoinAPI } from './api/coinapi';
+import { ApolloServer, gql } from 'apollo-server';
 import 'dotenv/config';
+import { CoinAPI } from './datasources/coin';
+import { IDataSources } from './types';
 
 const typeDefs = gql`
   type Exchange { 
@@ -16,23 +17,31 @@ const typeDefs = gql`
     data_trade_start: String
     data_trade_end: String
     data_symbols_count: Int
-    volume_1hrs_usd: Int
-    volume_1day_usd: Int
-    volume_1mth_usd: Int
+    volume_1hrs_usd: Float
+    volume_1day_usd: Float
+    volume_1mth_usd: Float
   }
 
   type Query {
     exchanges: [Exchange]
-    exchange(exchange_id: ID!): Exchange
+    exchange(exchange_id: ID!): [Exchange]
   }
 `;
 
 const resolvers = {
   Query: {
-    exchanges: async (_: any, __: any, { dataSources }: any) => {
+    exchanges: async (
+      _: any, 
+      __: any, 
+      { dataSources }:{ dataSources: IDataSources }
+    ) => {
       return dataSources.coinAPI.getExchanges()
     },
-    exchange: async (_: any, { exchange_id }: { exchange_id: string }, { dataSources }: any) => {
+    exchange: async (
+      _: any, 
+      { exchange_id }:{ exchange_id: string }, 
+      { dataSources }:{ dataSources: IDataSources }
+    ) => {
       return dataSources.coinAPI.getExchange(exchange_id)
     },
   },
