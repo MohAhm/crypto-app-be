@@ -23,4 +23,27 @@ export class CoinAPI extends RESTDataSource {
     }) 
   }
 
+  async getAssets() {
+    return this.get('/v1/assets', undefined, {
+      headers: {
+        'X-CoinAPI-Key': process.env.COINAPI_KEY as string
+      }
+    }) 
+  }
+
+  async getAsset(asset_id: string) {
+    return this.get(`/v1/assets/${asset_id}`, undefined, {
+      headers: {
+        'X-CoinAPI-Key': process.env.COINAPI_KEY as string
+      }
+    }) 
+  }
+
+  async getAssetIcons(iconSize: number) {
+    return this.get(`/v1/assets/icons/${iconSize}`, undefined, {
+      headers: {
+        'X-CoinAPI-Key': process.env.COINAPI_KEY as string
+      }
+    }) 
+  }
 }
