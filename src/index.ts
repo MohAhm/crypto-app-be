@@ -1,7 +1,8 @@
 import { ApolloServer, gql } from 'apollo-server';
+
 import 'dotenv/config';
 import { CoinAPI } from './datasources/coin';
-import { IDataSources } from './types';
+import { IDataSources, ILatestData } from './types';
 
 const typeDefs = gql`
   type Exchange { 
@@ -58,7 +59,7 @@ const typeDefs = gql`
     size_precision: Float
   }
 
-  type HistoricalData {
+  type LatestData {
     time_period_start: String
     time_period_end: String
     time_open: String
@@ -71,45 +72,17 @@ const typeDefs = gql`
     trades_count: Int
   }
 
-  type Assets {
-    asset_id: ID
-    name: String
-    type_is_crypto: Boolean
-    data_start: String
-    data_end: String
-    data_quote_start: String
-    data_quote_end: String
-    data_orderbook_start: String
-    data_orderbook_end: String
-    data_trade_start: String
-    data_trade_end: String
-    data_symbols_count: Int
-    volume_1hrs_usd: Float
-    volume_1day_usd: Float
-    volume_1mth_usd: Float
-    price_usd: Float
-  }
-
-  type AssetIcons {
-    asset_id: ID
-    url: String
-  }
-
   type Query {
     exchanges: [Exchange]
     exchangeIcons: [ExchangeIcons]
     exchange(exchange_id: ID!): Exchange
 
     symbol(exchange_id: ID!): Symbol
-    historicalData(
-      symbol_id: ID!, 
-      # period_id: tmp
-      # time_start: tmp
-    ): [HistoricalData]
-
-    assets: [Assets]
-    assetIcons: [AssetIcons]
-    asset(asset_id: ID!): Assets
+    latestData(
+      symbol_id: ID!
+      period_id: String!
+      limit: Int!
+    ): [LatestData]
   }
 `;
 
@@ -118,61 +91,39 @@ const resolvers = {
     exchanges: async (
       _: any, 
       __: any, 
-      { dataSources }:{ dataSources: IDataSources }
+      { dataSources }: { dataSources: IDataSources }
     ) => {
       return dataSources.coinAPI.getExchanges()
     },
     exchange: async (
       _: any, 
-      { exchange_id }:{ exchange_id: string }, 
-      { dataSources }:{ dataSources: IDataSources }
+      { exchange_id }: { exchange_id: string }, 
+      { dataSources }: { dataSources: IDataSources }
     ) => {
       return dataSources.coinAPI.getExchange(exchange_id)
     },
     exchangeIcons: async (
-      _: any, 
-      __: any, 
-      { dataSources }:{ dataSources: IDataSources }
+      _: any,
+      __: any,
+      { dataSources }: { dataSources: IDataSources }
     ) => {
       return dataSources.coinAPI.getExchangeIcons()
     },
 
     symbol: async (
       _: any, 
-      { exchange_id }:{ exchange_id: string }, 
-      { dataSources }:{ dataSources: IDataSources }
+      { exchange_id }: { exchange_id: string }, 
+      { dataSources }: { dataSources: IDataSources }
     ) => {
       return dataSources.coinAPI.getSymbol(exchange_id)
     },
 
-    historicalData: async (
+    latestData: async (
       _: any, 
-      { symbol_id }:{ symbol_id: string }, 
-      { dataSources }:{ dataSources: IDataSources }
+      latest: ILatestData, 
+      { dataSources }: { dataSources: IDataSources }
     ) => {
-      return dataSources.coinAPI.getHistory(symbol_id)
-    },
-    
-    assets: async (
-      _: any, 
-      __: any, 
-      { dataSources }:{ dataSources: IDataSources }
-    ) => {
-      return dataSources.coinAPI.getAssets()
-    },
-    asset: async (
-      _: any, 
-      { asset_id }:{ asset_id: string }, 
-      { dataSources }:{ dataSources: IDataSources }
-    ) => {
-      return dataSources.coinAPI.getAsset(asset_id)
-    },
-    assetIcons: async (
-      _: any, 
-      __: any, 
-      { dataSources }:{ dataSources: IDataSources }
-    ) => {
-      return dataSources.coinAPI.getAssetIcons()
+      return dataSources.coinAPI.getLatest(latest)
     },
   },
 };

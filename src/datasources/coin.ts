@@ -1,5 +1,6 @@
 import { RESTDataSource } from "apollo-datasource-rest";
 import 'dotenv/config';
+import { ILatestData } from "../types";
 
 export class CoinAPI extends RESTDataSource {
   constructor() {
@@ -43,34 +44,14 @@ export class CoinAPI extends RESTDataSource {
     return data[0]
   }
 
-  async getHistory(symbol_id: string, period_id?: string, time_start?: string) {
-    return await this.get(`/v1/ohlcv/${symbol_id}/history?period_id=1DAY&time_start=2016-01-01T00:00:00`, undefined, {
-      headers: {
-        'X-CoinAPI-Key': process.env.COINAPI_KEY as string
-      }
-    }) 
-  }
-
-  async getAssets() {
-    return this.get('/v1/assets', undefined, {
-      headers: {
-        'X-CoinAPI-Key': process.env.COINAPI_KEY as string,
-      }
-    }) 
-  }
-
-  async getAsset(asset_id: string) {
-    const data = await this.get(`/v1/assets/${asset_id}`, asset_id, {
-      headers: {
-        'X-CoinAPI-Key': process.env.COINAPI_KEY as string
-      }
-    }) 
-
-    return data[0]
-  }
-
-  async getAssetIcons() {
-    return this.get('/v1/assets/icons/1', undefined, {
+  async getLatest({ 
+    symbol_id, 
+    period_id, 
+    limit,
+  } : ILatestData) {
+    return await this.get(
+      `/v1/ohlcv/${symbol_id}/latest?period_id=${period_id}&limit=${limit}`, 
+    undefined, {
       headers: {
         'X-CoinAPI-Key': process.env.COINAPI_KEY as string
       }
