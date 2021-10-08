@@ -1,17 +1,19 @@
-import { RESTDataSource } from "apollo-datasource-rest";
-import 'dotenv/config';
+import { RESTDataSource } from "apollo-datasource-rest"
+
 import { ILatestData } from "../types";
+
+const coinApiKey ='F970591D-A926-44D0-8E3A-39D22375F1AF'
 
 export class CoinAPI extends RESTDataSource {
   constructor() {
     super()
-    this.baseURL = process.env.COINAPI_URL
+    this.baseURL = 'https://rest.coinapi.io/'
   }
 
   async getExchanges() {
     return this.get('/v1/exchanges', undefined, {
       headers: {
-        'X-CoinAPI-Key': process.env.COINAPI_KEY as string
+        'X-CoinAPI-Key': coinApiKey
       }
     }) 
   }
@@ -19,7 +21,7 @@ export class CoinAPI extends RESTDataSource {
   async getExchange(exchange_id: string) {
     const data = await this.get(`/v1/exchanges/${exchange_id}`, undefined, {
       headers: {
-        'X-CoinAPI-Key': process.env.COINAPI_KEY as string
+        'X-CoinAPI-Key': coinApiKey
       }
     }) 
 
@@ -29,7 +31,7 @@ export class CoinAPI extends RESTDataSource {
   async getExchangeIcons() {
     return this.get('/v1/exchanges/icons/1', undefined, {
       headers: {
-        'X-CoinAPI-Key': process.env.COINAPI_KEY as string
+        'X-CoinAPI-Key': coinApiKey
       }
     }) 
   }
@@ -37,7 +39,7 @@ export class CoinAPI extends RESTDataSource {
   async getSymbol(exchange_id: string) {
     const data = await this.get(`/v1/symbols/${exchange_id}`, undefined, {
       headers: {
-        'X-CoinAPI-Key': process.env.COINAPI_KEY as string
+        'X-CoinAPI-Key': coinApiKey
       }
     }) 
 
@@ -53,7 +55,7 @@ export class CoinAPI extends RESTDataSource {
       `/v1/ohlcv/${symbol_id}/latest?period_id=${period_id}&limit=${limit}`, 
     undefined, {
       headers: {
-        'X-CoinAPI-Key': process.env.COINAPI_KEY as string
+        'X-CoinAPI-Key': coinApiKey
       }
     }) 
   }
