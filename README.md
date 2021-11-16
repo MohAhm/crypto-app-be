@@ -1,6 +1,6 @@
 # Crypto App
 
-This is the back end part of the cryptocurrency application. The front end part end part can be found [here](https://github.com/MohAhm/crypto-app-fe).
+This is the back end part of the cryptocurrency application. The front end part can be found [here](https://github.com/MohAhm/crypto-app-fe).
 
 ## Project Setup
 
